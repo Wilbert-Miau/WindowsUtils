@@ -1,7 +1,6 @@
 package main
 
 import ("fmt"
-"os"
 "syscall"
 "unsafe")
 
@@ -20,23 +19,41 @@ var (
 	procSHEmptyRecycleBinW = shell32.NewProc("SHEmptyRecycleBinW")
 )
 
-func EmptyRecycleBin(drivePath *string){
-	var drivePathPointer *uint16
-	if drivePath!=nil{
-		result, err := syscall.UTF16PtrFromString(*drivePath)
+func main(){
+	EmptyRecycleBin()
+}
 
-		if err!=nil{
-			return
-		}
-		drivePathPointer=result
-	} else {
-		drivePathPointer= nil
+func EmptyRecycleBin(){
 
-	}
 	var handleToAWindow int =0
-	// pinter
-	var pszRootPath uintptr =uintptr(unsafe.Pointer(drivePathPointer))
+	var pszRootPath uintptr =uintptr(unsafe.Pointer(nil))
 	flags:= SHERB_NOCONFIRMATION|SHERB_NOPROGRESSUI|SHERB_NOSOUND
 
 	ret, _, err := procSHEmptyRecycleBinW.Call(uintptr(handleToAWindow),pszRootPath,uintptr(flags))
+	if ret!=0{
+		fmt.Println(err)
+	}else{
+		fmt.Println("recycle bin was emptied")
+	}
 }
+
+// func EmptyRecycleBin(drivePath *string){
+// 	var drivePathPointer *uint16
+// 	if drivePath!=nil{
+// 		result, err := syscall.UTF16PtrFromString(*drivePath)
+
+// 		if err!=nil{
+// 			return
+// 		}
+// 		drivePathPointer=result
+// 	} else {
+// 		drivePathPointer= nil
+
+// 	}
+// 	var handleToAWindow int =0
+// 	// pinter
+// 	var pszRootPath uintptr =uintptr(unsafe.Pointer(drivePathPointer))
+// 	flags:= SHERB_NOCONFIRMATION|SHERB_NOPROGRESSUI|SHERB_NOSOUND
+
+// 	ret, _, err := procSHEmptyRecycleBinW.Call(uintptr(handleToAWindow),pszRootPath,uintptr(flags))
+// }
